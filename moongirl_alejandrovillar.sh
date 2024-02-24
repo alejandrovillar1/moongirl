@@ -32,8 +32,8 @@ verificar_nmap() {
 
     # Ejecutar nmap en el servidor remoto y guardar la salida en la variable
     resultado_nmap=$(ssh $conexion 'nmap localhost')
-    # Formatear la salida para que sea legible en HTML (se vera en el html como si fuese la terminal utlizando el comando sed)
-    #'s/$/<br>/': es una expresión regular que busca el final de cada línea ($) y lo sustituye por <br>. Esto significa que después de cada línea de texto, se añadirá <br> como un salto de línea en HTML.
+    # Formatear la salida HTML (se vera en el html como si fuese la terminal utlizando el comando sed)
+    #'s/$/<br>/': busca el final de cada línea ($) y lo sustituye por <br>. Después de cada línea de texto, se añadirá <br> como un salto de línea en HTML.
     resultado_html=$(echo "$resultado_nmap" | sed 's/$/<br>/')
 
     # Llama a la función creacion_html con la salida formateada
@@ -51,13 +51,12 @@ comprobar_rendimiento_cpu() {
 BOOF
 
 )
-    # busca líneas que comiencen (^) con tres grupos de dos dígitos ([0-9]{2}) separados por dos puntos (:). Este patrón coincide con las líneas que contienen una marca de tiempo en formato de hora (por ejemplo, 20:16:03).
+    # busca líneas que comiencen (^) con tres grupos de dos dígitos ([0-9]{2}) separados por dos puntos (:). Esto coincide con las líneas que tienen en formato de hora (por ejemplo, 20:16:03).
     resultado_cpu=$(echo "$resultado" | grep -E '^[0-9]{2}:[0-9]{2}:[0-9]{2}|Average:')
-    # Limpia la salida de sar para que sea legible en HTML
     #s/^/\<pre\>/: Esto agrega <pre> al principio de cada línea. El ^ es un ancla que indica el comienzo de la línea.
     #s/$/\<\/pre\>/: Esto agrega </pre> al final de cada línea. El $ es un ancla que indica el final de la línea.
     resultado_html=$(echo "$resultado_cpu" | sed 's/^/\<pre\>/; s/$/\<\/pre\>/')
-    # Llama a la función creacion_html con la salida de sar formateada
+    # Llama a la función creacion_html
     creacion_html "$resultado_html"
 }
 
@@ -77,7 +76,7 @@ comprobar_estado_apache() {
 procesos_recursos() {
     # Utilizamos el comando ps para obtener los procesos ordenados por uso de recursos
     # estamos solicitando que ps muestre el PID (ID del proceso), PPID (ID del proceso padre), CMD (comando), %MEM (porcentaje de memoria utilizado) y %CPU (porcentaje de uso de CPU) para cada proceso.
-    # --sort=-%mem,-%cpu: Ordena la salida según el porcentaje de memoria (%MEM) y el porcentaje de uso de CPU (%CPU) de forma descendente 
+    # --sort=-%mem,-%cpu: Ordena la salida según el porcentaje de memoria (%MEM) y el porcentaje de uso de CPU (%CPU)
     procesos=$(ssh $conexion 'ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem,-%cpu | head -n 6' | sed 's/^/\<pre\>/; s/$/\<\/pre\>/')
     creacion_html "$procesos"
 }
