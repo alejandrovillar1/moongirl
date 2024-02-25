@@ -90,7 +90,7 @@ procesos_recursos() {
 #Esta funcion solo comprueba el espacio que hay en el servidor
 comprobar_espacio_sistema() {
    #el comando sed hace lo mismo que en la parte de arriba da un aspecto en el html como si fuese una terminal
-   resultado_espacio=$(df -h | sed 's/^/\<pre\>/; s/$/\<\/pre\>/')
+   resultado_espacio=$(ssh $conexion 'df -h' | sed 's/^/\<pre\>/; s/$/\<\/pre\>/')
    creacion_html "$resultado_espacio"
 }
 
